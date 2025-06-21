@@ -6,9 +6,11 @@ const FEED_URLS = [
   "https://omni.se/ekonomi",
   "https://omni.se/politik",
   "https://omni.se/opinion",
-  // "https://omni.se/sport",
+  "https://omni.se/sport",
   "https://omni.se/noje-kultur",
   "https://omni.se/tech",
+
+  // premium feeds
   // "https://omni.se/perspektiv-pa-varlden",
   // "https://omni.se/innovation-framtid",
 ];
@@ -20,6 +22,7 @@ const FEED_URLS = [
 
 // TODO
 // format and write as RSS XML
+// host online and make it accessible
 
 async function getItems(url) {
   const items = [];
