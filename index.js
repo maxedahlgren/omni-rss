@@ -1,20 +1,31 @@
 import { JSDOM } from "jsdom";
 
-const URL = "https://omni.se/senaste";
+const FEED_URLS = [
+  "https://omni.se/inrikes",
+  "https://omni.se/utrikes",
+  "https://omni.se/ekonomi",
+  "https://omni.se/politik",
+  "https://omni.se/opinion",
+  // "https://omni.se/sport",
+  "https://omni.se/noje-kultur",
+  "https://omni.se/tech",
+  // "https://omni.se/perspektiv-pa-varlden",
+  // "https://omni.se/innovation-framtid",
+];
 
 // DONE
 // scrape articles and collect relevant data
 // filter out ads and premium
+// access different feeds
 
 // TODO
 // format and write as RSS XML
-// get more articles (up to a given date or given number of articles?)
 
-async function getItems() {
+async function getItems(url) {
   const items = [];
   const teasers = [];
 
-  const response = await fetch(URL);
+  const response = await fetch(url);
 
   const dom = new JSDOM(await response.text());
 
@@ -33,7 +44,9 @@ async function getItems() {
       return;
     }
 
-    teasers.push(...cluster.querySelectorAll("[class^='Teaser_teaserContainer']"));
+    teasers.push(
+      ...cluster.querySelectorAll("[class^='Teaser_teaserContainer']"),
+    );
   });
 
   teasers.forEach((teaser) => {
@@ -55,17 +68,26 @@ async function getItems() {
     items.push({ guid, title, description, pubDate, imgSrc });
   });
 
+  console.log(url + ", " + items.length);
+
   return items;
 }
 
-const items = await getItems();
+Promise.all(FEED_URLS.map((url) => getItems(url))).then((feeds) => {
+  const items = [].concat(...feeds);
 
-console.log("got " + items.length + " items");
-items.forEach((item) => {
-  console.log(
-    item.guid?.substring(0, 10),
-    item.title?.substring(0, 10),
-    item.description?.substring(0, 10),
-    item.pubDate,
+  items.sort((a, b) =>
+    a.pubDate < b.pubDate ? 1 : a.pubDate > b.pubDate ? -1 : 0,
   );
+
+  console.log("got " + items.length + " articles");
+
+  // items.forEach((item) => {
+  //   console.log(
+  //     item.guid?.substring(0, 10),
+  //     item.title?.substring(0, 10),
+  //     item.description?.substring(0, 10),
+  //     item.pubDate,
+  //   );
+  // });
 });
