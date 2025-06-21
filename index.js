@@ -15,15 +15,6 @@ const FEED_URLS = [
   // "https://omni.se/innovation-framtid",
 ];
 
-// DONE
-// scrape articles and collect relevant data
-// filter out ads and premium
-// access different feeds
-
-// TODO
-// format and write as RSS XML
-// host online and make it accessible
-
 async function getItems(url) {
   const items = [];
   const teasers = [];
