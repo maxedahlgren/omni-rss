@@ -9,7 +9,8 @@
   "author": "Max Dahlgren",
   "license": "ISC",
   "dependencies": {
-    "jsdom": "^26.1.0"
+    "jsdom": "^26.1.0",
+    "xml-writer": "^1.7.0"
   },
   "type": "module"
 }

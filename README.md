@@ -8,9 +8,10 @@ DONE:
 - scrape articles and collect relevant data
 - filter out ads and premium
 - access different feeds
+- format and write as RSS XML
 
 TODO:
 
-- format and write as RSS XML
+- test rss is correctly written
 - host online and make it accessible
-
+- remaining todos
