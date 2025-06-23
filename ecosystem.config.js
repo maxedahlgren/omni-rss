@@ -6,7 +6,7 @@ export const apps = [
   {
     name: "update-rss",
     script: "npm run update-rss",
-    cron_restart: "0 * * * *",
+    cron_restart: "0,30 * * * *",
     autorestart: false,
   },
 ];
