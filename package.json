@@ -5,12 +5,14 @@
   "main": "server.js",
   "scripts": {
     "update-rss": "node update-rss",
-    "server": "node --env-file=.env server.js"
+    "server": "node --env-file=.env server.js",
+    "pm2": "pm2 start pm2.config.js"
   },
   "author": "Max Dahlgren",
   "license": "ISC",
   "dependencies": {
     "jsdom": "^26.1.0",
+    "pm2": "^6.0.8",
     "xml-writer": "^1.7.0"
   },
   "type": "module"
