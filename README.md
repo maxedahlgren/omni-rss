@@ -9,9 +9,9 @@ DONE:
 - filter out ads and premium
 - access different feeds
 - format and write as RSS XML
+- test rss is correctly written
+- basic server functionality
 
 TODO:
 
-- test rss is correctly written
 - host online and make it accessible
-- remaining todos

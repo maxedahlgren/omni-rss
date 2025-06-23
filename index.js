@@ -1,9 +1,15 @@
 import { JSDOM } from "jsdom";
 import XMLWriter from "xml-writer";
 import fs from "fs";
+import http from "http";
+
 import { formatDate } from "./utils.js";
 
 const HOST_URL = "https://omni.se";
+const FILEPATH = "rss.xml";
+
+const HOSTNAME = "192.168.0.2";
+const PORT = "8080";
 
 const FEED_URLS = [
   "https://omni.se/inrikes",
@@ -20,6 +26,7 @@ const FEED_URLS = [
   // "https://omni.se/innovation-framtid",
 ];
 
+// Leaves fields undefined if class is not found
 async function getItems(url) {
   const items = [];
   const teasers = [];
@@ -54,31 +61,34 @@ async function getItems(url) {
       return;
     }
 
-    // TODO: currently fails silently leaving field undefined if an element 
-    // (apart from date) isn't found. Could be handled better
     const path = teaser
       .querySelector("[class^='Teaser_teaser_'")
       ?.querySelector("a")?.href;
-    const guid = HOST_URL + path;
+    const link = HOST_URL + path;
 
     const title = teaser.querySelector("h2")?.innerHTML;
     const description = teaser.querySelector(
       "[class^='TeaserText_teaserText']",
     )?.innerHTML;
 
-    const date = teaser.querySelector("time")?.dateTime;
-    const pubDate = date ? formatDate(new Date(date)) : undefined;
+    const dateTime = teaser.querySelector("time")?.dateTime;
+    const pubDate = dateTime ? formatDate(new Date(dateTime)) : undefined;
 
-    // TODO: '&' in search params seems to be written '&amp;'
-    // unsure yet if this will cause issues
-    const imageURL = new URL(teaser.querySelector("img").src);
+    let imageURL;
+    if (teaser.querySelector("img")) {
+      imageURL = new URL(teaser.querySelector("img").src);
 
-    // overwrite url query params to ensure thumbnail image
-    imageURL.searchParams.set("h", "180");
-    imageURL.searchParams.set("w", "180");
-    const imgSrc = imageURL.href;
+      // overwrite url query params to ensure thumbnail image
+      imageURL.searchParams.set("h", "180");
+      imageURL.searchParams.set("w", "180");
+    }
+    const imgSrc = imageURL.href ?? undefined;
 
-    items.push({ guid, title, description, pubDate, imgSrc });
+    if (!imgSrc) {
+      console.log(link);
+    }
+
+    items.push({ link, title, description, pubDate, imgSrc, dateTime });
   });
 
   console.log(url + ", " + items.length);
@@ -86,25 +96,36 @@ async function getItems(url) {
   return items;
 }
 
-function writeItem(writer, { guid, title, description, pubDate, imgSrc }) {
+// Leaves out fields if undefined
+function writeItem(writer, { link, title, description, pubDate, imgSrc }) {
   writer.startElement("item");
 
-  writer.startElement("guid").text(guid).endElement();
-  writer.startElement("link").text(guid).endElement();
-  writer.startElement("title").text(title).endElement();
-  writer.startElement("description").text(description).endElement();
+  if (link) {
+    writer.startElement("guid").text(link).endElement();
+    writer.startElement("link").text(link).endElement();
+  }
+  if (title) {
+    writer.startElement("title").text(title).endElement();
+  }
+  if (description) {
+    writer.startElement("description").text(description).endElement();
+  }
   if (pubDate) {
     writer.startElement("pubDate").text(pubDate).endElement();
   }
-  writer.startElement("media:content")
-    .writeAttribute("width", "180")
-    .writeAttribute("url", imgSrc).endElement();
+  if (imgSrc) {
+    writer
+      .startElement("enclosure")
+      .writeAttribute("url", imgSrc)
+      .writeAttribute("type", "image/jpeg")
+      .endElement();
+  }
 
   writer.endElement();
 }
 
 function writeXML(items) {
-  const writeStream = fs.createWriteStream('rss.xml');
+  const writeStream = fs.createWriteStream(FILEPATH);
 
   const writer = new XMLWriter(true, function (string, encoding) {
     writeStream.write(string, encoding);
@@ -132,7 +153,7 @@ Promise.all(FEED_URLS.map((url) => getItems(url)))
     const items = [].concat(...feeds);
 
     items.sort((a, b) =>
-      a.pubDate < b.pubDate ? 1 : a.pubDate > b.pubDate ? -1 : 0,
+      a.dateTime < b.dateTime ? 1 : a.dateTime > b.dateTime ? -1 : 0,
     );
 
     console.log("got " + items.length + " articles");
@@ -142,3 +163,25 @@ Promise.all(FEED_URLS.map((url) => getItems(url)))
   .catch((error) => {
     throw error;
   });
+
+const server = http.createServer((request, response) => {
+  const stat = fs.statSync(FILEPATH);
+
+  console.log(
+    `${new Date().toISOString()} Request from ${request.socket.remoteAddress}`,
+  );
+
+  // Set the response HTTP header with HTTP status and Content type
+  response.writeHead(200, {
+    "Content-Type": "application/xml; charset=utf-8",
+    "Content-Length": stat.size,
+  });
+
+  const readStream = fs.createReadStream(FILEPATH);
+  readStream.pipe(response);
+});
+
+// Start the server and listen on the specified port
+server.listen(PORT, HOSTNAME, () => {
+  console.log(`Server running at http://${HOSTNAME}:${PORT}/`);
+});
