@@ -4,7 +4,8 @@
   "description": "Generates an rss file for omni.se",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "update-rss": "node update-rss",
+    "server": "node index.js"
   },
   "author": "Max Dahlgren",
   "license": "ISC",
