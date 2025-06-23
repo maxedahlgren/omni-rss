@@ -2,10 +2,10 @@
   "name": "omni-rss",
   "version": "1.0.0",
   "description": "Generates an rss file for omni.se",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
     "update-rss": "node update-rss",
-    "server": "node --env-file=.env index.js"
+    "server": "node --env-file=.env server.js"
   },
   "author": "Max Dahlgren",
   "license": "ISC",
