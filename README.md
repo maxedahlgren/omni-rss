@@ -15,3 +15,7 @@ DONE:
 TODO:
 
 - host online and make it accessible
+  - move to docker container
+  - cron job for update-rss.js
+  - run index.js as server
+  - host on aws ecr

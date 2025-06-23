@@ -14,6 +14,8 @@ const timeFormat = new Intl.DateTimeFormat("en-GB", {
   timeZoneName: "short",
 });
 
+export const FILEPATH = "rss.xml";
+
 // Writes a date in format required (RFC822)
 export function formatDate(date) {
   return dateFormat.format(date) + " " + timeFormat.format(date);
