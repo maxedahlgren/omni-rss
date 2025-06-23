@@ -3,8 +3,7 @@ import http from "http";
 
 import { FILEPATH } from "./utils.js";
 
-const HOSTNAME = "192.168.0.2";
-const PORT = "8080";
+const { PORT, HOST } = process.env;
 
 const server = http.createServer((request, response) => {
   const stat = fs.statSync(FILEPATH);
@@ -24,6 +23,6 @@ const server = http.createServer((request, response) => {
 });
 
 // Start the server and listen on the specified port
-server.listen(PORT, HOSTNAME, () => {
-  console.log(`Server running at http://${HOSTNAME}:${PORT}/`);
+server.listen(PORT, HOST, () => {
+  console.log(`Server running at http://${HOST}:${PORT}/`);
 });

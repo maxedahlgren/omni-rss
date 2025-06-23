@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "update-rss": "node update-rss",
-    "server": "node index.js"
+    "server": "node --env-file=.env index.js"
   },
   "author": "Max Dahlgren",
   "license": "ISC",
