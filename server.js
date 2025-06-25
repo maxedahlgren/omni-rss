@@ -1,18 +1,28 @@
+import { execSync } from "child_process";
 import fs from "fs";
 import http from "http";
 
 import { FILEPATH } from "./utils.js";
 
-const { PORT, HOST } = process.env;
+const { HOST = "localhost", PORT = 8080 } = process.env;
 
-const server = http.createServer((request, response) => {
-  const stat = fs.statSync(FILEPATH);
+// Amount of time to have elapsed before feed should be refreshed (in ms)
+const REFRESH_TIME = 600000; // 10 * 60 * 1000
 
-  console.log(
-    `${new Date().toISOString()} Request from ${request.socket.remoteAddress}`,
-  );
+/** @param {http.ServerResponse} response */
+function sendXML(response) {
+  const stat = fs.statSync(FILEPATH, { throwIfNoEntry: false });
 
-  // Set the response HTTP header with HTTP status and Content type
+  if (!stat || new Date() - stat.mtime > REFRESH_TIME) {
+    console.log("updating rss");
+
+    // Could have error handling here, for now trusting pm2 to restart server 
+    // and log and failed request should let me know something went wrong
+    execSync("npm run update-rss");
+
+    console.log("rss updated");
+  }
+
   response.writeHead(200, {
     "Content-Type": "application/xml; charset=utf-8",
     "Content-Length": stat.size,
@@ -20,6 +30,23 @@ const server = http.createServer((request, response) => {
 
   const readStream = fs.createReadStream(FILEPATH);
   readStream.pipe(response);
+}
+
+/** @param {http.ServerResponse} response */
+function badRequest(response) {
+  response.end("404");
+}
+
+const server = http.createServer((request, response) => {
+  console.log(`${new Date().toISOString()} received request`);
+  switch (request.url) {
+    case "/rss":
+      sendXML(response);
+      break;
+    default:
+      badRequest(response);
+      break;
+  }
 });
 
 // Start the server and listen on the specified port

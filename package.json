@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "update-rss": "node update-rss",
-    "server": "node --env-file=.env server.js",
+    "server": "node --env-file-if-exists=.env server.js",
     "pm2": "pm2 start pm2.config.js"
   },
   "author": "Max Dahlgren",

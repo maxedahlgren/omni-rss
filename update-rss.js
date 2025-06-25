@@ -143,18 +143,13 @@ function writeXML(items) {
   writeStream.end();
 }
 
-Promise.all(FEED_URLS.map((url) => getItems(url)))
-  .then((feeds) => {
-    const items = [].concat(...feeds);
+// Does not catch errors
+async function updateRSS() {
+  const feeds = await Promise.all(FEED_URLS.map((url) => getItems(url)));
+  const items = [].concat(...feeds);
+  items.sort((a, b) => a.dateTime < b.dateTime ? 1 : a.dateTime > b.dateTime ? -1 : 0);
+  console.log(`got ${items.length} articles`);
+  writeXML(items);
+}
 
-    items.sort((a, b) =>
-      a.dateTime < b.dateTime ? 1 : a.dateTime > b.dateTime ? -1 : 0,
-    );
-
-    console.log(`got ${items.length} articles`);
-
-    writeXML(items);
-  })
-  .catch((error) => {
-    throw error;
-  });
+updateRSS();
