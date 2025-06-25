@@ -25,7 +25,7 @@ function sendXML(response) {
 
   response.writeHead(200, {
     "Content-Type": "application/xml; charset=utf-8",
-    "Content-Length": stat.size,
+    "Content-Length": fs.statSync(FILEPATH).size,
   });
 
   const readStream = fs.createReadStream(FILEPATH);
