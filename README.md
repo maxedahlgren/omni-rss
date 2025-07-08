@@ -5,8 +5,10 @@ I made this since Omni doesn't seem to have an RSS or Atom feed of its own.
 
 ## Running
 
-The server and update script can both be managed by pm2 which can be started with `pm2 start ecosystem.config.js`.
-
 `npm run update-rss` runs a script which updates the file `rss.xml`.
 
-`npm run server` starts the server which simply responds with `rss.xml` to all requests.
+`npm run server` starts the server which responds with the xml file at the path `/rss` after updating it if necessary.
+
+`npm run pm2` starts the server with the management software pm2 to ensure that it stays up.
+
+`npm run pm2-stop` stops the pm2-run server.
