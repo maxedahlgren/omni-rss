@@ -4,6 +4,16 @@ import fs from "fs";
 
 import { formatDate, FILEPATH } from "./utils.js";
 
+/**
+ * @typedef {Object} Item An article item used for writing XML
+ * @property {string} link
+ * @property {string} title
+ * @property {string=} description
+ * @property {string} pubDate rss formatted pubDate (RFC822)
+ * @property {string} imgSrc link to thumbnail image
+ * @property {string} dateTime date value retrieved from article
+ */
+
 const HOST_URL = "https://omni.se";
 
 const FEED_URLS = [
@@ -21,7 +31,11 @@ const FEED_URLS = [
   // "https://omni.se/innovation-framtid",
 ];
 
-// Leaves fields undefined if class is not found
+/**
+ * Leaves fields undefined if class is not found
+ * @param {string} url
+ * @returns {Item[]} List of rss Items
+ */
 async function getItems(url) {
   const items = [];
   const teasers = [];
@@ -61,10 +75,10 @@ async function getItems(url) {
       ?.querySelector("a")?.href;
     const link = HOST_URL + path;
 
-    const title = teaser.querySelector("h2")?.innerHTML;
+    const title = teaser.querySelector("h2")?.textContent;
     const description = teaser.querySelector(
       "[class^='TeaserText_teaserText']",
-    )?.innerHTML;
+    )?.textContent;
 
     const dateTime = teaser.querySelector("time")?.dateTime;
     const pubDate = dateTime ? formatDate(new Date(dateTime)) : undefined;
@@ -91,7 +105,11 @@ async function getItems(url) {
   return items;
 }
 
-// Leaves out fields if undefined
+/**
+ * Leaves out fields if undefined
+ * @param {XMLWriter} writer
+ * @param {Item} item
+ */
 function writeItemXML(writer, { link, title, description, pubDate, imgSrc }) {
   writer.startElement("item");
 
@@ -119,6 +137,10 @@ function writeItemXML(writer, { link, title, description, pubDate, imgSrc }) {
   writer.endElement();
 }
 
+/**
+ * Writes items to an XML file
+ * @param {Item[]} items
+ */
 function writeXML(items) {
   const writeStream = fs.createWriteStream(FILEPATH);
 
@@ -146,8 +168,10 @@ function writeXML(items) {
 // Does not catch errors
 async function updateRSS() {
   const feeds = await Promise.all(FEED_URLS.map((url) => getItems(url)));
-  const items = [].concat(...feeds);
-  items.sort((a, b) => a.dateTime < b.dateTime ? 1 : a.dateTime > b.dateTime ? -1 : 0);
+  const items = feeds.flat();
+  items.sort((a, b) =>
+    a.dateTime < b.dateTime ? 1 : a.dateTime > b.dateTime ? -1 : 0,
+  );
   console.log(`got ${items.length} articles`);
   writeXML(items);
 }
