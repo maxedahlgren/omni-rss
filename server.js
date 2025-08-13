@@ -9,7 +9,11 @@ const { HOST = "localhost", PORT = 8080 } = process.env;
 // Amount of time to have elapsed before feed should be refreshed (in ms)
 const REFRESH_TIME = 600000; // 10 * 60 * 1000
 
-/** @param {http.ServerResponse} response */
+/** 
+ * Writes the contents of the XML file to the response.
+ * If the XML file is older than REFRESH_TIME, updates it before sending.
+ * @param {http.ServerResponse} response 
+ */
 function sendXML(response) {
   const stat = fs.statSync(FILEPATH, { throwIfNoEntry: false });
 
