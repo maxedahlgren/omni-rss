@@ -91,7 +91,7 @@ async function getItems(url) {
       imageURL.searchParams.set("h", "180");
       imageURL.searchParams.set("w", "180");
     }
-    const imgSrc = imageURL.href ?? undefined;
+    const imgSrc = imageURL?.href;
 
     if (!imgSrc) {
       console.log(link);
