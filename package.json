@@ -5,15 +5,12 @@
   "main": "server.js",
   "scripts": {
     "update-rss": "node update-rss",
-    "server": "node --env-file-if-exists=.env server.js",
-    "pm2": "pm2 start 'node run server' --name omni-rss",
-    "pm2-stop": "pm2 delete all"
+    "server": "node --env-file-if-exists=.env server.js"
   },
   "author": "Max Dahlgren",
   "license": "ISC",
   "dependencies": {
     "jsdom": "^26.1.0",
-    "pm2": "^6.0.8",
     "xml-writer": "^1.7.0"
   },
   "type": "module"
