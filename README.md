@@ -9,3 +9,15 @@ I made this since Omni doesn't seem to have an RSS or Atom feed of its own.
 
 `npm run server` starts the server which responds with the xml file at the path `/rss` after updating it if necessary.
 
+## Rewrite using XSL and Atom
+
+### Done
+
+- XML basics
+- Run using php
+- Single feed
+
+### TODO
+
+- Thumbnail integration
+- Combine all feeds
