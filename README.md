@@ -16,8 +16,8 @@ I made this since Omni doesn't seem to have an RSS or Atom feed of its own.
 - XML basics
 - Run using php
 - Single feed
+- Combine all feeds
 
 ### TODO
 
 - Thumbnail integration
-- Combine all feeds

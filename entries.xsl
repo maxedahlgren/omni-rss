@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+
+<xsl:transform
+  version="1.0"
+  xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+  xmlns:h="http://www.w3.org/1999/xhtml"
+  xmlns:date="http://exslt.org/dates-and-times"
+  extension-element-prefixes="date"
+>
+  <xsl:output method="xml" indent="yes"/>
+
+  <xsl:template match="/">
+      <xsl:for-each select="//div[starts-with(@class, 'TeaserCluster_clusterContainer') and not(contains(@class, 'native')) and not(contains(@class, 'premium'))]">
+        <xsl:for-each select=".//article">
+          <xsl:variable name="datetime"><xsl:value-of select=".//time/@datetime"/></xsl:variable>
+          <xsl:if test="string($datetime)">
+            <entry>
+            <title><xsl:value-of select="normalize-space(div//h2)"/></title>
+            <link>https://omni.se<xsl:value-of select=".//a/@href"/></link>
+            <updated><xsl:value-of select="$datetime"/></updated>
+            <summary><xsl:value-of select="normalize-space(.//p)"/></summary>
+            <!-- TODO: image -->
+          </entry>
+        </xsl:if>
+      </xsl:for-each>
+    </xsl:for-each>
+  </xsl:template>
+</xsl:transform>
