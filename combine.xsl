@@ -19,19 +19,19 @@
       </author>
       <id>http://omni.se</id>
 
-      <xsl:for-each select="//entry">
+      <xsl:for-each select="entry">
         <xsl:sort select="updated" order="descending"/>
         <entry>
-        <title><xsl:value-of select="title"/></title>
-        <id><xsl:value-of select="link"/></id>
-        <link href="{link}"/>
-        <updated><xsl:value-of select="updated"/></updated>
-        <summary><xsl:value-of select="summary"/></summary>
-        <xsl:if test="imgSrc">
+          <title><xsl:value-of select="title"/></title>
+          <id><xsl:value-of select="link"/></id>
+          <link href="{link}"/>
+          <updated><xsl:value-of select="updated"/></updated>
+          <summary><xsl:value-of select="summary"/></summary>
+          <xsl:if test="imgSrc">
             <media:thumbnail url="{imgSrc}" width="180" height="180"/>
-        </xsl:if>
-      </entry>
-    </xsl:for-each>
+          </xsl:if>
+        </entry>
+      </xsl:for-each>
 
     </feed>
   </xsl:template>

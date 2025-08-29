@@ -1,13 +1,13 @@
 <?php
 $links = array(
   "https://omni.se/inrikes",
-  // "https://omni.se/utrikes",
-  // "https://omni.se/ekonomi",
-  // "https://omni.se/politik",
-  // "https://omni.se/opinion",
-  // "https://omni.se/sport",
-  // "https://omni.se/noje-kultur",
-  // "https://omni.se/tech",
+   "https://omni.se/utrikes",
+   "https://omni.se/ekonomi",
+   "https://omni.se/politik",
+   "https://omni.se/opinion",
+   "https://omni.se/sport",
+   "https://omni.se/noje-kultur",
+   "https://omni.se/tech",
 );
 
 $entries = '';

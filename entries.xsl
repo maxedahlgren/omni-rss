@@ -15,6 +15,7 @@
           <xsl:variable name="datetime"><xsl:value-of select=".//time/@datetime"/></xsl:variable>
           <xsl:variable name="imgSrc"><xsl:value-of select=".//img/@src"/></xsl:variable>
 
+          <!-- Only sponsored and premium articles lack a datetime value -->
           <xsl:if test="string($datetime)">
             <entry>
             <title><xsl:value-of select="normalize-space(div//h2)"/></title>
