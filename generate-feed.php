@@ -1,13 +1,18 @@
 <?php
+// don't print errors to stdout
+ini_set('display_errors', 'stderr');
+
+use Dom\HTMLDocument;
+
 $links = array(
+  "https://omni.se/ekonomi",
   "https://omni.se/inrikes",
-   "https://omni.se/utrikes",
-   "https://omni.se/ekonomi",
-   "https://omni.se/politik",
-   "https://omni.se/opinion",
-   "https://omni.se/sport",
-   "https://omni.se/noje-kultur",
-   "https://omni.se/tech",
+  "https://omni.se/noje-kultur",
+  "https://omni.se/opinion",
+  "https://omni.se/politik",
+  "https://omni.se/sport",
+  "https://omni.se/tech",
+  "https://omni.se/utrikes",
 );
 
 $entries = '';
@@ -18,10 +23,15 @@ $entries_xsl->load('entries.xsl', LIBXML_NOERROR);
 $entries_processor = new XSLTProcessor();
 $entries_processor->importStylesheet($entries_xsl);
 
+// Currently generates feed so long as one link is successful which is ok
+// since some data is better than no data
 foreach ($links as $link) {
   $html = new DOMDocument();
   $html->loadHTMLFile($link, LIBXML_NOERROR);
   $entries = $entries . $entries_processor->transformToXML($html);
+  if (empty($entries)) {
+    throw new Exception("Failed to retrieve any entries");
+  }
 }
 
 // Remove all xml version tags since they are duplicated for each link
